@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main</title>
+  <!-- style -->
+  <link rel="stylesheet" href="./style.css">
+  <!-- script -->
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.core.js" integrity="sha512-C0afWIPdzlVjwwblFJpwtKTrzExaBUyh0ZqtrHnKvOlwPUfgs9JfAxZgB4MAzbSQSwppapCXuTsBcnJkhaAOOw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/ko.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="./script.js"></script>
+</head>
+<body>
+  <div id="root">
+    <div class="block">
+      <div class="block">
+        <h1 class="center">Main Home</h1>
+      </div>
+    </div>
+
+    <main>
+      <div
+        hx-boost="true" 
+        hx-target="#root" 
+        hx-swap="outerHTML transition:true"
+      >
+        <ul>
+          <li><a href="./a.html">a</a></li>
+          <li><a href="./b.html">b</a></li>
+          <li><a href="./c.html">c</a></li>
+          <li><a href="./d.html">d</a></li>
+        </ul>
+      </div>
+
+      <div>
+        pagination
+      </div>
+    </main>
+  </div>
+
+  <script>
+    scriptManager.load('https://cdnjs.cloudflare.com/ajax/libs/rxjs/7.8.1/rxjs.umd.min.js')
+      .then(() => {
+        console.log(rxjs.of(1));
+      });
+  </script>
+</body>
+</html>
