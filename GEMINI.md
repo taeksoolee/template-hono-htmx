@@ -83,5 +83,8 @@
     - `Session` 타입을 `Session<{ [key: string]: { isLoggedIn: boolean } }>`으로 업데이트하여 다중 인증 컨텍스트를 지원.
     - `authAppMiddleware`를 `authMiddleware`로 이름 변경하고 `AuthName`과 함께 작동하도록 일반화.
     - 기존 `hono-app/src/views/app/index.html` 및 `hono-app/src/views/auth/app/login.html` 파일을 삭제하고, 각각 `hono-app/src/views/_app/index.html` 및 `hono-app/src/views/_auth/app/login.html`로 이동.
+  - **`hono-app` 인증 시스템 리팩토링 개선:**
+    - 로그인 페이지 (`/auth/app/login`) 접근 시 이미 로그인된 사용자를 `/app`으로 리디렉션하도록 `setAuth` 함수 내 로직 추가.
+    - `setAuth` 함수 내에서 `authRouter`를 `app.route(`/${name}`, authRouter)` 대신 `app.route(`/`, authRouter)`로 등록하도록 변경. (이 변경은 라우팅 구조에 영향을 미칠 수 있으므로 주의 필요)
 
 ---

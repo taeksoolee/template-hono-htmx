@@ -114,12 +114,20 @@ const setAuth = (name: AuthName, checkSign: CheckSign, options?: CreateAuthMiddl
       // Redirect to login page if not logged in
       return c.redirect(loginUrl);
     }
+    
     await next();
   });
 
 
   logRegist('get', loginUrl, loginFile);
-  app.get(loginUrl, (c) => {
+  app.get(loginUrl, async (c) => {
+    const session = c.var.session;
+    const { isLoggedIn } = (await session.get())?.[name] || {};
+
+    if (isLoggedIn) {
+      return c.redirect(appUrl);
+    }
+
     const htmlContent = nunjucks.render(loginFile, {});
     return c.html(htmlContent);
   });
@@ -154,7 +162,7 @@ const setAuth = (name: AuthName, checkSign: CheckSign, options?: CreateAuthMiddl
   // Register templates for authenticated /app routes
   viewTemplates(authRouter, viewsPath, path.join(viewsPath, `_${name}`), `/${name}`);
 
-  app.route(`/${name}`, authRouter);
+  app.route(`/`, authRouter);
 
 
   return authMiddleware;
