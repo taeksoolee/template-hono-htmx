@@ -4,8 +4,8 @@
 
 ## 📜 규칙 (Rules)
 
-- 하나의 작업이 끝난후에는 아래 작업 히스토리를 기록해야 한다.
-- 하나의 작업후 적절한 커밋메시지를 작성하여 깃 커밋을 실행하도록 한다.
+- 하나의 작업이 끝난후에는 이 파일 아래 작업 히스토리를 기록하고, 적절한 깃 커밋 메시지를 작성하여 커밋을 실행해야 한다.
+- 요청이 깃 커밋을 실행하라는 경우 히스토리는 작성하지 않는다.
 - 깃 커밋 메시지 작성시에는 제목, 내용 모두 한글로 작성해야 한다.
 - 주석은 기본 한글로 달며, 필요한 경우 영문을 포함해야 한다.
 - 주석은 꼭 필요한곳에만 추가하고 최대한 코드만 읽었을때 해석이 되도록 해야 한다.
@@ -17,8 +17,17 @@
 이 섹션에는 이 프로젝트에서 수행된 작업 내역이 기록됩니다.
 
 - **2025-11-22**:
-  - `hono-app` 프로젝트 생성, TypeScript로 전환, `project_history.md` 파일 생성.
-  - `feat: TypeScript 기반 hono-app 초기화` 커밋.
-  - `docs: Gemini 에이전트 규칙 추가` 커밋.
+  - **`hono-app` 프로젝트 초기 설정:**
+    - JavaScript 기반 Hono 프로젝트 생성 (`hono`, `@hono/node-server` 설치).
+    - TypeScript로 전환 (`typescript`, `@types/node`, `tsx` 설치).
+    - `tsconfig.json` 설정 및 `moduleResolution: 'bundler'`로 수정.
+    - `package.json`에 `start:tsx` 스크립트 설정.
+    - Node.js 표준 `.gitignore` 파일 추가.
+  - **커밋 내역:**
+    - `feat: TypeScript 기반 hono-app 초기화`
+    - `docs: Gemini 에이전트 규칙 추가`
+    - `docs: 작업 히스토리 업데이트`
+  - **히스토리 관리 변경:**
+    - `project_history.md` 내용을 `GEMINI.md`에 통합하고 파일 삭제.
 
 ---
