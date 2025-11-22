@@ -69,5 +69,7 @@
     - `authMiddleware`에서 `session.data?.isLoggedIn ?? false` 대신 `const { isLoggedIn } = await session.get() || {}`를 사용하여 세션 데이터에 접근하도록 수정.
     - `hono-app/src/views/app/index.html`의 제목을 "Welcome to the Hono App!!"으로 변경.
     - `hono-app/src/views/auth/login.html`의 폼 액션을 `/app`에서 `/auth/login`으로 수정.
+  - **`hono-app` 코드 세미콜론 추가:**
+    - `hono-app/src/index.ts` 파일 내 모든 코드 문장 끝에 세미콜론 추가.
 
 ---
