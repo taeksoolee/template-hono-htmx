@@ -95,5 +95,10 @@
     - `setAuth` 함수를 `hono-app/src/utils/set-auth.ts`로 분리.
     - `viewTemplates` 함수를 `hono-app/src/utils/view-templates.ts`로 분리.
     - `hono-app/src/index.ts`를 업데이트하여 분리된 모듈들을 import하고, 메인 애플리케이션 로직만 유지.
+  - **`hono-app/src/utils/set-auth.ts` 추가 리팩토링:**
+    - `session.update` 호출 시 기존 세션 데이터를 보존하도록 로직 수정.
+    - `viewTemplates` 함수 호출 시 인증된 경로의 기본 경로를 `/`로 변경.
+    - `authRouter`를 `app.route(`/${name}`, authRouter)`로 마운트하도록 변경하여 라우팅 구조 개선.
+    - `return authMiddleware;` 문 제거.
 
 ---

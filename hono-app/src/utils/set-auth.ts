@@ -75,14 +75,22 @@ export const setAuth = (app: Hono, name: AuthName, checkSign: CheckSign, options
     }
 
     const session = c.var.session;
-    await session.update({ [name]: { isLoggedIn: true } });
+    const curSessionData = await session.get() || {
+      app: { isLoggedIn: false },
+      hzv: { isLoggedIn: false },
+    };
+    await session.update({ ...curSessionData, [name]: { isLoggedIn: true } });
     return c.redirect(appUrl);
   });
 
   logRegist('get', logoutUrl);
   app.get(logoutUrl, async (c) => {
     const session = c.var.session;
-    await session.update({ [name]: { isLoggedIn: false } });
+    const curSessionData = await session.get() || {
+      app: { isLoggedIn: false },
+      hzv: { isLoggedIn: false },
+    };
+    await session.update({ ...curSessionData, [name]: { isLoggedIn: false } });
     return c.redirect(loginUrl);
   });
 
@@ -90,10 +98,7 @@ export const setAuth = (app: Hono, name: AuthName, checkSign: CheckSign, options
   authRouter.use(authMiddleware);
 
   // Register templates for authenticated /app routes
-  viewTemplates(authRouter, viewsPath, path.join(viewsPath, `_${name}`), `/${name}`);
+  viewTemplates(authRouter, viewsPath, path.join(viewsPath, `_${name}`), `/`);
 
-  app.route(`/`, authRouter);
-
-
-  return authMiddleware;
+  app.route(`/${name}`, authRouter);
 };
