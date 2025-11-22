@@ -63,7 +63,7 @@ app.use(useSession({
 // Authentication Middleware
 const authMiddleware = createMiddleware(async (c, next) => {
   const session = c.var.session
-  const isLoggedIn = await session.get('isLoggedIn')
+  const isLoggedIn = session.data?.isLoggedIn ?? false
 
   if (!isLoggedIn) {
     // Redirect to login page if not logged in

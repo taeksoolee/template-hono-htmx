@@ -62,5 +62,7 @@
   - **`hono-app` Session 타입 단언 제거 및 `session.set`을 `session.update`로 변경:**
     - `c.var.session`에 대한 명시적인 `as Session<{ isLoggedIn: boolean }>` 타입 단언을 제거.
     - `session.set('isLoggedIn', true)` 호출을 `session.update({ isLoggedIn: true })`로 변경.
+  - **`hono-app` `session.get` 사용법 수정:**
+    - `session.get('isLoggedIn')` 대신 `session.data?.isLoggedIn ?? false`를 사용하여 세션 데이터에 접근하도록 수정.
 
 ---
