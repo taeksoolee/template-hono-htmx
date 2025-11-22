@@ -64,5 +64,9 @@
     - `session.set('isLoggedIn', true)` 호출을 `session.update({ isLoggedIn: true })`로 변경.
   - **`hono-app` `session.get` 사용법 수정:**
     - `session.get('isLoggedIn')` 대신 `session.data?.isLoggedIn ?? false`를 사용하여 세션 데이터에 접근하도록 수정.
+  - **`hono-app` `session.get` 사용법 및 기타 수정:**
+    - `authMiddleware`에서 `session.data?.isLoggedIn ?? false` 대신 `const { isLoggedIn } = await session.get() || {}`를 사용하여 세션 데이터에 접근하도록 수정.
+    - `hono-app/src/views/app/index.html`의 제목을 "Welcome to the Hono App!!"으로 변경.
+    - `hono-app/src/views/auth/login.html`의 폼 액션을 `/app`에서 `/auth/login`으로 수정.
 
 ---
