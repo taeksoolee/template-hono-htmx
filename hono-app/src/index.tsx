@@ -1,10 +1,16 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
+import { Layout } from './views/layout'
+import { IndexPage } from './views'
 
 const app = new Hono()
 
 app.get('/', (c) => {
-  return c.text('Hello Hono!')
+  return c.html(
+    <Layout>
+      <IndexPage title="Hono 앱" />
+    </Layout>
+  )
 })
 
 const port = 3000
