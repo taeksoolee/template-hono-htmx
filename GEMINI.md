@@ -43,6 +43,12 @@
     - `hono-app/src/index.ts`를 수정하여 `views` 디렉토리 내의 `.html` 파일을 동적으로 읽고 Nunjucks 템플릿 엔진을 사용하여 라우팅 처리.
     - `fs` 및 `path` 모듈을 사용하여 파일 시스템을 탐색하고 라우트 경로를 생성하는 `createRoutePath` 및 `viewTemplates` 함수 구현.
     - `hono-app/src/views/index.html` 내용을 "Hello from Hono with Nunjucks!"로 변경.
-    - `hono-app/src/views/about.html` 및 `hono-app/src/views/auth/login.html` 파일 추가 (또는 해당 디렉토리 생성).
+    - `hono-app/src/views/about.html`, `hono-app/src/views/auth/login.html`, `hono-app/src/views/app/index.html` 파일 추가 (또는 해당 디렉토리 생성).
+  - **`hono-app` 인증 미들웨어 및 세션 관리 구현:**
+    - `@hono/session` 패키지 설치.
+    - `hono-app/src/index.ts`에 세션 미들웨어 (`sessionMiddleware`) 및 인증 미들웨어 (`authMiddleware`) 추가.
+    - `/auth/login` (GET, POST) 및 `/auth/logout` 라우트 구현.
+    - `/app` 경로에 `authMiddleware`를 적용하여 인증된 사용자만 접근 가능하도록 설정.
+    - `viewTemplates` 함수를 리팩토링하여 Hono 인스턴스를 인수로 받아 라우트를 등록하도록 변경.
 
 ---
