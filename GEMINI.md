@@ -77,5 +77,11 @@
     - 로그인 및 로그아웃 라우트를 `/auth/app/login` 및 `/auth/app/logout`으로 변경.
     - `hono-app/src/views/auth/login.html` 파일을 삭제하고, 새로운 로그인 페이지를 `hono-app/src/views/auth/app/login.html`에 생성.
     - `hono-app/src/views/app/index.html`에 로그아웃 링크 추가.
+  - **`hono-app` 인증 시스템 리팩토링:**
+    - `hono-app/src/index.ts`에 `setAuth` 함수를 도입하여 인증 로직을 캡슐화하고 재사용성을 높임.
+    - `viewTemplates` 함수를 수정하여 `_`로 시작하는 디렉토리(예: `_app`, `_auth`)를 건너뛰도록 하여 인증된 뷰를 관리.
+    - `Session` 타입을 `Session<{ [key: string]: { isLoggedIn: boolean } }>`으로 업데이트하여 다중 인증 컨텍스트를 지원.
+    - `authAppMiddleware`를 `authMiddleware`로 이름 변경하고 `AuthName`과 함께 작동하도록 일반화.
+    - 기존 `hono-app/src/views/app/index.html` 및 `hono-app/src/views/auth/app/login.html` 파일을 삭제하고, 각각 `hono-app/src/views/_app/index.html` 및 `hono-app/src/views/_auth/app/login.html`로 이동.
 
 ---

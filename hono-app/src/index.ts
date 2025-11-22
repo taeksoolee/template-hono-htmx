@@ -8,9 +8,19 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+type AuthName = 'app';
+
 declare module 'hono' {
   interface ContextVariableMap {
-    session: Session<{ app: {isLoggedIn: boolean } }>;
+    session: Session<Record<AuthName, {isLoggedIn: boolean }>>;
+  }
+}
+
+const logRegist = (method: 'get' | 'post' | 'put' | 'delete', routePath: string, renderFile?: string) => {
+  if (renderFile) {
+    console.log(`[${method}] Registering route for "${routePath}", rendering file: "${renderFile}"`);
+  } else {
+    console.log(`[${method}] Registering route for "${routePath}"`);
   }
 }
 
@@ -23,8 +33,7 @@ const createRoutePath = (fileName: string, prefix: string) => {
   return `${prefix}${path.basename(fileName, '.html') === 'index' ? '' : path.basename(fileName, '.html')}`;
 };
 
-// viewTemplates 함수를 Hono 인스턴스를 인수로 받도록 수정
-const viewTemplates = (honoApp: Hono, baseViewPath: string, currentDir: string, prefix: string) => {
+const viewTemplates = (app: Hono, baseViewPath: string, currentDir: string, prefix: string) => {
   fs.readdirSync(currentDir, { withFileTypes: true }).forEach((e) => {
     const fullPath = path.join(currentDir, e.name);
     const relativePath = path.relative(baseViewPath, fullPath);
@@ -32,15 +41,19 @@ const viewTemplates = (honoApp: Hono, baseViewPath: string, currentDir: string, 
     if (e.isFile()) {
       if (path.extname(e.name) === '.html') {
         const routePath = createRoutePath(e.name, prefix);
-        console.log(`Registering route for ${routePath}, rendering file: ${relativePath}`);
         
-        honoApp.get(routePath, (c) => {
+        logRegist('get', routePath, relativePath);
+        app.get(routePath, (c) => {
           const htmlContent = nunjucks.render(relativePath, {});
           return c.html(htmlContent);
         });
       }
     } else if (e.isDirectory()) {
-      viewTemplates(honoApp, baseViewPath, fullPath, `${prefix}${e.name}/`);
+      if (e.name.startsWith('_')) { // Skip private directories (those starting with '_')
+        return;
+      }
+
+      viewTemplates(app, baseViewPath, fullPath, `${prefix}${e.name}/`);
     }
   });
 };
@@ -60,76 +73,98 @@ app.use(useSession({
   // In production, consider setting expiresIn, cookie.secure, cookie.sameSite, etc.
 }));
 
-// Authentication Middleware
-const authAppMiddleware = createMiddleware(async (c, next) => {
-  const session = c.var.session;
-  const { isLoggedIn } = (await session.get())?.app || {};
+type CheckSign = (credentials: {username: string, password: string}) => boolean;
+type CreateAuthMiddlewareOptions = {
+  invalidInputMessage?: string;
+  invalidCredentialsMessage?: string;
+}
 
-  if (!isLoggedIn) {
-    // Redirect to login page if not logged in
-    return c.redirect('/auth/app/login');
-  }
-  await next();
-});
+/**
+ * 이 함수는 middleware를 생성하여 특정 경로(/[name]/**)에 대한 인증을 처리합니다.
+ * 
+ * login, logout 경로를 자동 등록합니다.
+ * 
+ * 반드시 views/_auth/[name]/login.html 파일을 생성해야 합니다. (이 파일은 로그인 폼을 렌더링하는데 사용)
+ * 
+ * @example 
+ * - name을 app으로 지정하는 경우 다음과 같은 경로가 생성됩니다.
+ *   - /auth/app/login (GET, POST) - GET은 로그인 폼을 제공하고, POST는 사용자 인증을 처리
+ *   - /auth/app/logout (GET) - 사용자를 로그아웃 처리
+ *   - views/auth/app/login.html 파일 생성필요
+ *   - 인증이 필요한 경로는 /app/* 형태로 접근 가능
+ */
+const setAuth = (name: AuthName, checkSign: CheckSign, options?: CreateAuthMiddlewareOptions) => {
+  const {
+    invalidInputMessage = 'Invalid input. Please provide both username and password.',
+    invalidCredentialsMessage = 'Invalid credentials. Please try again.'
+  } = options || {};
 
-// Public routes (no authentication required)
-// Login page
-app.get('/auth/app/login', (c) => {
-  const htmlContent = nunjucks.render('auth/app/login.html', {});
-  return c.html(htmlContent);
-});
+  const appUrl = `/${name}`;
+  const loginUrl = `/auth/${name}/login`;
+  const logoutUrl = `/auth/${name}/logout`;
 
-// Login POST handler
-app.post('/auth/app/login', async (c) => {
-  const { username, password } = await c.req.parseBody();
-  // Dummy authentication check
-  if (username === 'user' && password === 'password') {
+  const loginFile = `_auth/${name}/login.html`;
+
+  // Authentication Middleware
+  const authMiddleware = createMiddleware(async (c, next) => {
     const session = c.var.session;
-    await session.update({ app: { isLoggedIn: true } });
-    return c.redirect('/app');
-  } else {
-    // For simplicity, just redirect back to login with an error (or render error on page)
-    return c.redirect('/auth/app/login?error=invalid_credentials');
-  }
+    const { isLoggedIn } = (await session.get())?.[name] || {};
+
+    if (!isLoggedIn) {
+      // Redirect to login page if not logged in
+      return c.redirect(loginUrl);
+    }
+    await next();
+  });
+
+
+  logRegist('get', loginUrl, loginFile);
+  app.get(loginUrl, (c) => {
+    const htmlContent = nunjucks.render(loginFile, {});
+    return c.html(htmlContent);
+  });
+
+  logRegist('post', loginUrl);
+  app.post(loginUrl, async (c) => {
+    const { username, password } = await c.req.parseBody();
+
+    if (typeof username !== 'string' || typeof password !== 'string') {
+      return c.redirect(`${loginUrl}?error=${invalidInputMessage}`);
+    }
+
+    if (!checkSign({username, password})) {
+      return c.redirect(`${loginUrl}?error=${invalidCredentialsMessage}`);
+    }
+
+    const session = c.var.session;
+    await session.update({ [name]: { isLoggedIn: true } });
+    return c.redirect(appUrl);
+  });
+
+  logRegist('get', logoutUrl);
+  app.get(logoutUrl, async (c) => {
+    const session = c.var.session;
+    await session.update({ [name]: { isLoggedIn: false } });
+    return c.redirect(loginUrl);
+  });
+
+  const authRouter = new Hono();
+  authRouter.use(authMiddleware);
+
+  // Register templates for authenticated /app routes
+  viewTemplates(authRouter, viewsPath, path.join(viewsPath, `_${name}`), `/${name}`);
+
+  app.route(`/${name}`, authRouter);
+
+
+  return authMiddleware;
+};
+
+setAuth('app', ({username, password}) => {
+  return username === 'user' && password === 'password'
 });
 
-// Logout route
-app.get('/auth/app/logout', async (c) => {
-  const session = c.var.session;
-  await session.delete();
-  return c.redirect('/auth/app/login');
-});
-
-// Register public routes (excluding 'app' and 'auth' directories)
-fs.readdirSync(viewsPath, { withFileTypes: true }).forEach((e) => {
-  const fullPath = path.join(viewsPath, e.name);
-  if (e.isDirectory() && (e.name === 'app' || e.name === 'auth')) {
-    // Skip 'app' and 'auth' directories as they are handled separately
-    return;
-  }
-  if (e.isFile() && path.extname(e.name) === '.html') {
-    const routePath = createRoutePath(e.name, '/');
-    console.log(`Registering public route for ${routePath}, rendering file: ${e.name}`);
-    app.get(routePath, (c) => {
-      const htmlContent = nunjucks.render(e.name, {});
-      return c.html(htmlContent);
-    });
-  } else if (e.isDirectory()) {
-    // Recursively register templates for other public subdirectories
-    viewTemplates(app, viewsPath, fullPath, `/${e.name}/`);
-  }
-});
-
-
-// Apply authMiddleware to routes under /app
-const appGroup = new Hono();
-appGroup.use(authAppMiddleware);
-
-// Register templates for authenticated /app routes
-viewTemplates(appGroup, viewsPath, path.join(viewsPath, 'app'), '/');
-
-app.route('/app', appGroup);
-
+viewTemplates(app, viewsPath, viewsPath, '/');
 
 const port = 3000;
 console.log(`Server is running on port ${port}`);
