@@ -59,5 +59,8 @@
     - `Session` 타입 단언에 제네릭 타입 인수를 추가하여 `Session<{ isLoggedIn: boolean }>`으로 변경.
   - **`hono-app` ContextVariableMap 타입 확장:**
     - `Property 'session' does not exist on type 'Readonly<ContextVariableMap>'` 오류 해결을 위해 `hono` 모듈에 `ContextVariableMap` 인터페이스를 확장하여 `session` 속성을 추가.
+  - **`hono-app` Session 타입 단언 제거 및 `session.set`을 `session.update`로 변경:**
+    - `c.var.session`에 대한 명시적인 `as Session<{ isLoggedIn: boolean }>` 타입 단언을 제거.
+    - `session.set('isLoggedIn', true)` 호출을 `session.update({ isLoggedIn: true })`로 변경.
 
 ---
