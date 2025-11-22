@@ -8,6 +8,12 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
+declare module 'hono' {
+  interface ContextVariableMap {
+    session: Session<{ isLoggedIn: boolean }>;
+  }
+}
+
 // __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
