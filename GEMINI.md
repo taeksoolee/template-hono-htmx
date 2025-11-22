@@ -29,10 +29,10 @@
     - `docs: 작업 히스토리 업데이트`
   - **히스토리 관리 변경:**
     - `project_history.md` 내용을 `GEMINI.md`에 통합하고 파일 삭제.
-  - **`hono-app` HTML 렌더링 구조 변경:**
-    - `src/views` 디렉토리 및 `layout.tsx`, `index.tsx` 컴포넌트 생성.
-    - `index.ts`를 `src` 디렉토리로 이동하여 소스코드 구조 정리.
-    - `package.json`의 경로 수정.
-    - `index.ts`가 텍스트 대신 JSX 컴포넌트(`c.html()`)를 렌더링하도록 수정.
+  - **`hono-app` 렌더링 방식 변경 (JSX -> 정적 HTML):**
+    - 사용자의 요구사항을 재확인하여, JSX 렌더링 방식에서 정적 `.html` 파일을 직접 서빙하는 방식으로 변경.
+    - 기존 `layout.tsx`, `index.tsx` 삭제 및 `index.tsx`를 `index.ts`로 이름 변경.
+    - `src/views/index.html` 정적 파일 생성.
+    - `fs/promises`를 사용하여 `index.html` 파일을 읽고 `c.html()`으로 서빙하도록 `src/index.ts` 수정.
 
 ---
