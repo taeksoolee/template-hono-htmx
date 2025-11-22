@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 
 declare module 'hono' {
   interface ContextVariableMap {
-    session: Session<{ isLoggedIn: boolean }>;
+    session: Session<{ app: {isLoggedIn: boolean } }>;
   }
 }
 
@@ -61,43 +61,43 @@ app.use(useSession({
 }));
 
 // Authentication Middleware
-const authMiddleware = createMiddleware(async (c, next) => {
+const authAppMiddleware = createMiddleware(async (c, next) => {
   const session = c.var.session;
-  const { isLoggedIn } = await session.get() || {};
+  const { isLoggedIn } = (await session.get())?.app || {};
 
   if (!isLoggedIn) {
     // Redirect to login page if not logged in
-    return c.redirect('/auth/login');
+    return c.redirect('/auth/app/login');
   }
   await next();
 });
 
 // Public routes (no authentication required)
 // Login page
-app.get('/auth/login', (c) => {
-  const htmlContent = nunjucks.render('auth/login.html', {});
+app.get('/auth/app/login', (c) => {
+  const htmlContent = nunjucks.render('auth/app/login.html', {});
   return c.html(htmlContent);
 });
 
 // Login POST handler
-app.post('/auth/login', async (c) => {
+app.post('/auth/app/login', async (c) => {
   const { username, password } = await c.req.parseBody();
   // Dummy authentication check
   if (username === 'user' && password === 'password') {
     const session = c.var.session;
-    await session.update({ isLoggedIn: true });
+    await session.update({ app: { isLoggedIn: true } });
     return c.redirect('/app');
   } else {
     // For simplicity, just redirect back to login with an error (or render error on page)
-    return c.redirect('/auth/login?error=invalid_credentials');
+    return c.redirect('/auth/app/login?error=invalid_credentials');
   }
 });
 
 // Logout route
-app.get('/auth/logout', async (c) => {
+app.get('/auth/app/logout', async (c) => {
   const session = c.var.session;
   await session.delete();
-  return c.redirect('/auth/login');
+  return c.redirect('/auth/app/login');
 });
 
 // Register public routes (excluding 'app' and 'auth' directories)
@@ -123,7 +123,7 @@ fs.readdirSync(viewsPath, { withFileTypes: true }).forEach((e) => {
 
 // Apply authMiddleware to routes under /app
 const appGroup = new Hono();
-appGroup.use(authMiddleware);
+appGroup.use(authAppMiddleware);
 
 // Register templates for authenticated /app routes
 viewTemplates(appGroup, viewsPath, path.join(viewsPath, 'app'), '/');

@@ -71,5 +71,11 @@
     - `hono-app/src/views/auth/login.html`의 폼 액션을 `/app`에서 `/auth/login`으로 수정.
   - **`hono-app` 코드 세미콜론 추가:**
     - `hono-app/src/index.ts` 파일 내 모든 코드 문장 끝에 세미콜론 추가.
+  - **`hono-app` 인증 및 앱 로직 분리:**
+    - `hono-app/src/index.ts`에서 세션 타입을 `Session<{ app: {isLoggedIn: boolean } }>`으로 변경하여 세션 데이터를 `app` 키 아래에 중첩.
+    - 인증 미들웨어 (`authMiddleware`를 `authAppMiddleware`로 이름 변경)에서 `session.get()?.app?.isLoggedIn`을 사용하여 로그인 상태 확인.
+    - 로그인 및 로그아웃 라우트를 `/auth/app/login` 및 `/auth/app/logout`으로 변경.
+    - `hono-app/src/views/auth/login.html` 파일을 삭제하고, 새로운 로그인 페이지를 `hono-app/src/views/auth/app/login.html`에 생성.
+    - `hono-app/src/views/app/index.html`에 로그아웃 링크 추가.
 
 ---
