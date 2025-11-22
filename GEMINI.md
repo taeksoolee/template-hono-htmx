@@ -86,5 +86,14 @@
   - **`hono-app` 인증 시스템 리팩토링 개선:**
     - 로그인 페이지 (`/auth/app/login`) 접근 시 이미 로그인된 사용자를 `/app`으로 리디렉션하도록 `setAuth` 함수 내 로직 추가.
     - `setAuth` 함수 내에서 `authRouter`를 `app.route(`/${name}`, authRouter)` 대신 `app.route(`/`, authRouter)`로 등록하도록 변경. (이 변경은 라우팅 구조에 영향을 미칠 수 있으므로 주의 필요)
+  - **`hono-app` 코드 파일 세분화 리팩토링:**
+    - `hono-app/src/index.ts`의 `viewsPath` 상수를 `hono-app/src/const.ts`로 분리.
+    - `AuthName` 타입을 `hono-app/src/types/auth-name.ts`로 분리.
+    - `CheckSign` 및 `CreateAuthMiddlewareOptions` 타입을 `hono-app/src/types/set-auth.ts`로 분리.
+    - `createRoutePath` 함수를 `hono-app/src/utils/create-route-path.ts`로 분리.
+    - `logRegist` 함수를 `hono-app/src/utils/log-regist.ts`로 분리.
+    - `setAuth` 함수를 `hono-app/src/utils/set-auth.ts`로 분리.
+    - `viewTemplates` 함수를 `hono-app/src/utils/view-templates.ts`로 분리.
+    - `hono-app/src/index.ts`를 업데이트하여 분리된 모듈들을 import하고, 메인 애플리케이션 로직만 유지.
 
 ---
