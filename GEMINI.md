@@ -38,5 +38,11 @@
     - `nunjucks` 및 `@types/nunjucks` 패키지 설치.
     - `index.ts`에서 Nunjucks 환경을 설정하고, `fs`를 사용한 정적 파일 읽기 로직을 `nunjucks.render()`로 대체.
     - `views/index.html` 파일을 Nunjucks 변수 `{{ }}`를 사용하도록 수정.
+- **2025-11-23**:
+  - **`hono-app` 동적 라우팅 및 Nunjucks 템플릿 확장:**
+    - `hono-app/src/index.ts`를 수정하여 `views` 디렉토리 내의 `.html` 파일을 동적으로 읽고 Nunjucks 템플릿 엔진을 사용하여 라우팅 처리.
+    - `fs` 및 `path` 모듈을 사용하여 파일 시스템을 탐색하고 라우트 경로를 생성하는 `createRoutePath` 및 `viewTemplates` 함수 구현.
+    - `hono-app/src/views/index.html` 내용을 "Hello from Hono with Nunjucks!"로 변경.
+    - `hono-app/src/views/about.html` 및 `hono-app/src/views/auth/login.html` 파일 추가 (또는 해당 디렉토리 생성).
 
 ---
