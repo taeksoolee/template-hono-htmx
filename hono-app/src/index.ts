@@ -1,8 +1,7 @@
 import { serve } from '@hono/node-server'
 
 import { Hono } from 'hono'
-import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
-import { sessionMiddleware, Session } from '@hono/session'
+import { useSession, Session } from '@hono/session'
 import { createMiddleware } from 'hono/factory'
 import nunjucks from 'nunjucks'
 import fs from 'fs'
@@ -49,7 +48,7 @@ nunjucks.configure(viewsPath, {
 })
 
 // Session Middleware
-app.use(sessionMiddleware({
+app.use(useSession({
   secret: 'your-super-secret-key-that-is-at-least-32-chars-long', // TODO: Replace with a strong, randomly generated secret from environment variables
   // For simplicity, we'll use default session options.
   // In production, consider setting expiresIn, cookie.secure, cookie.sameSite, etc.

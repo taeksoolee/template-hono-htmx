@@ -50,5 +50,9 @@
     - `/auth/login` (GET, POST) 및 `/auth/logout` 라우트 구현.
     - `/app` 경로에 `authMiddleware`를 적용하여 인증된 사용자만 접근 가능하도록 설정.
     - `viewTemplates` 함수를 리팩토링하여 Hono 인스턴스를 인수로 받아 라우트를 등록하도록 변경.
+  - **`hono-app` 세션 미들웨어 import 및 사용법 수정:**
+    - `sessionMiddleware` 대신 `useSession`을 `@hono/session`에서 import하도록 수정.
+    - `app.use(sessionMiddleware(...))`를 `app.use(useSession(...))`로 변경.
+    - 사용하지 않는 `hono/cookie` 관련 import 제거.
 
 ---
