@@ -34,5 +34,9 @@
     - 기존 `layout.tsx`, `index.tsx` 삭제 및 `index.tsx`를 `index.ts`로 이름 변경.
     - `src/views/index.html` 정적 파일 생성.
     - `fs/promises`를 사용하여 `index.html` 파일을 읽고 `c.html()`으로 서빙하도록 `src/index.ts` 수정.
+  - **`hono-app` 템플릿 엔진 Nunjucks 도입:**
+    - `nunjucks` 및 `@types/nunjucks` 패키지 설치.
+    - `index.ts`에서 Nunjucks 환경을 설정하고, `fs`를 사용한 정적 파일 읽기 로직을 `nunjucks.render()`로 대체.
+    - `views/index.html` 파일을 Nunjucks 변수 `{{ }}`를 사용하도록 수정.
 
 ---

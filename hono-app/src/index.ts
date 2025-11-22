@@ -1,6 +1,6 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
-import { promises as fs } from 'fs'
+import nunjucks from 'nunjucks'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -10,15 +10,18 @@ const __dirname = path.dirname(__filename)
 
 const app = new Hono()
 
-app.get('/', async (c) => {
-  try {
-    const htmlPath = path.join(__dirname, 'views', 'index.html')
-    const htmlContent = await fs.readFile(htmlPath, 'utf-8')
-    return c.html(htmlContent)
-  } catch (error) {
-    console.error('Error reading HTML file:', error)
-    return c.text('Internal Server Error', 500)
+// Nunjucks 환경 설정
+nunjucks.configure(path.join(__dirname, 'views'), {
+  autoescape: true,
+})
+
+app.get('/', (c) => {
+  const data = {
+    title: 'Nunjucks 템플릿',
+    message: 'Hono와 Nunjucks를 사용하여 렌더링되었습니다!',
   }
+  const htmlContent = nunjucks.render('index.html', data)
+  return c.html(htmlContent)
 })
 
 const port = 3000
