@@ -54,5 +54,8 @@
     - `sessionMiddleware` 대신 `useSession`을 `@hono/session`에서 import하도록 수정.
     - `app.use(sessionMiddleware(...))`를 `app.use(useSession(...))`로 변경.
     - 사용하지 않는 `hono/cookie` 관련 import 제거.
+  - **`hono-app` 라우트 그룹 및 Session 타입 단언 수정:**
+    - `app.group('/app')` 대신 `new Hono()` 인스턴스를 생성하고 `app.route('/app', appGroup)`을 사용하여 라우트 그룹을 등록하도록 수정.
+    - `Session` 타입 단언에 제네릭 타입 인수를 추가하여 `Session<{ isLoggedIn: boolean }>`으로 변경.
 
 ---

@@ -56,7 +56,7 @@ app.use(useSession({
 
 // Authentication Middleware
 const authMiddleware = createMiddleware(async (c, next) => {
-  const session = c.var.session as Session
+  const session = c.var.session as Session<{ isLoggedIn: boolean }>
   const isLoggedIn = await session.get('isLoggedIn')
 
   if (!isLoggedIn) {
@@ -78,7 +78,7 @@ app.post('/auth/login', async (c) => {
   const { username, password } = await c.req.parseBody()
   // Dummy authentication check
   if (username === 'user' && password === 'password') {
-    const session = c.var.session as Session
+    const session = c.var.session as Session<{ isLoggedIn: boolean }>
     await session.set('isLoggedIn', true)
     return c.redirect('/app')
   } else {
@@ -89,7 +89,7 @@ app.post('/auth/login', async (c) => {
 
 // Logout route
 app.get('/auth/logout', async (c) => {
-  const session = c.var.session as Session
+  const session = c.var.session as Session<{ isLoggedIn: boolean }>
   await session.delete()
   return c.redirect('/auth/login')
 })
@@ -116,11 +116,13 @@ fs.readdirSync(viewsPath, { withFileTypes: true }).forEach((e) => {
 
 
 // Apply authMiddleware to routes under /app
-const appGroup = app.group('/app')
+const appGroup = new Hono()
 appGroup.use(authMiddleware)
 
 // Register templates for authenticated /app routes
 viewTemplates(appGroup, viewsPath, path.join(viewsPath, 'app'), '/')
+
+app.route('/app', appGroup)
 
 
 const port = 3000
