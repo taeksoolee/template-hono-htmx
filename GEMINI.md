@@ -16,6 +16,9 @@
 
 이 섹션에는 이 프로젝트에서 수행된 작업 내역이 기록됩니다.
 
-- **2025-11-22**: `hono-app` 프로젝트 생성, TypeScript로 전환, `project_history.md` 파일 생성.
+- **2025-11-22**:
+  - `hono-app` 프로젝트 생성, TypeScript로 전환, `project_history.md` 파일 생성.
+  - `feat: TypeScript 기반 hono-app 초기화` 커밋.
+  - `docs: Gemini 에이전트 규칙 추가` 커밋.
 
 ---
