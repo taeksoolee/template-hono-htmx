@@ -17,8 +17,11 @@ export const viewTemplates = (app: Hono, baseViewPath: string, currentDir: strin
         const routePath = createRoutePath(e.name, prefix);
         
         logRegist('get', routePath, relativePath);
-        app.get(routePath, (c) => {
-          const htmlContent = nunjucks.render(relativePath, {});
+        app.get(routePath.replace(/\/$/, ''), (c) => {
+          const htmlContent = nunjucks.render(relativePath, {
+            query: c.req.query(),
+            currentPath: c.req.path
+          });
           return c.html(htmlContent);
         });
       }

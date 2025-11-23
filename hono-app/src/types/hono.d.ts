@@ -1,8 +1,8 @@
 import { Session } from "@hono/session";
-import { AuthName } from "./auth-name";
+import { SessionData } from "./session-data";
 
 declare module 'hono' {
   interface ContextVariableMap {
-    session: Session<Record<AuthName, {isLoggedIn: boolean }>>;
+    session: Session<SessionData>;
   }
 }

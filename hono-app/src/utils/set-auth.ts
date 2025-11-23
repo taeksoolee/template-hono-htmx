@@ -2,12 +2,21 @@ import { Hono } from "hono";
 import nunjucks from 'nunjucks';
 import { createMiddleware } from "hono/factory";
 
-import { AuthName } from "../types/auth-name";
-import { CheckSign, CreateAuthMiddlewareOptions } from "../types/set-auth";
 import { logRegist } from "./log-regist";
 import { viewTemplates } from "./view-templates";
 import path from "path";
-import { viewsPath } from "../const";
+import { appNames, __dirname, viewsDir } from "../const";
+import { Tokens } from "../types/tokens";
+
+type Credentials = {username: string, password: string};
+export type CheckSign = ((credentials: Credentials) => Promise<boolean>) 
+  | ((credentials: Credentials) => Promise<Tokens | null>);
+export type CreateAuthMiddlewareOptions = {
+  invalidInputMessage?: string;
+  invalidCredentialsMessage?: string;
+}
+
+type AppName = typeof appNames[number];
 
 /**
  * 이 함수는 middleware를 생성하여 특정 경로(/[name]/**)에 대한 인증을 처리합니다.
@@ -23,7 +32,7 @@ import { viewsPath } from "../const";
  *   - views/auth/app/login.html 파일 생성필요
  *   - 인증이 필요한 경로는 /app/* 형태로 접근 가능
  */
-export const setAuth = (app: Hono, name: AuthName, checkSign: CheckSign, options?: CreateAuthMiddlewareOptions) => {
+export const setAuth = (app: Hono, name: AppName, checkSign: CheckSign, options?: CreateAuthMiddlewareOptions) => {
   const {
     invalidInputMessage = 'Invalid input. Please provide both username and password.',
     invalidCredentialsMessage = 'Invalid credentials. Please try again.'
@@ -33,7 +42,7 @@ export const setAuth = (app: Hono, name: AuthName, checkSign: CheckSign, options
   const loginUrl = `/auth/${name}/login`;
   const logoutUrl = `/auth/${name}/logout`;
 
-  const loginFile = `_auth/${name}/login.html`;
+  const loginFile = `views/_auth/${name}/login.html`;
 
   // Authentication Middleware
   const authMiddleware = createMiddleware(async (c, next) => {
@@ -70,27 +79,21 @@ export const setAuth = (app: Hono, name: AuthName, checkSign: CheckSign, options
       return c.redirect(`${loginUrl}?error=${invalidInputMessage}`);
     }
 
-    if (!checkSign({username, password})) {
+    const signedResult = await checkSign({username, password});
+
+    if (!signedResult) {
       return c.redirect(`${loginUrl}?error=${invalidCredentialsMessage}`);
     }
 
     const session = c.var.session;
-    const curSessionData = await session.get() || {
-      app: { isLoggedIn: false },
-      hzv: { isLoggedIn: false },
-    };
-    await session.update({ ...curSessionData, [name]: { isLoggedIn: true } });
+    await session.update({ [name]: { isLoggedIn: true, tokens: signedResult } });
     return c.redirect(appUrl);
   });
 
   logRegist('get', logoutUrl);
   app.get(logoutUrl, async (c) => {
     const session = c.var.session;
-    const curSessionData = await session.get() || {
-      app: { isLoggedIn: false },
-      hzv: { isLoggedIn: false },
-    };
-    await session.update({ ...curSessionData, [name]: { isLoggedIn: false } });
+    await session.update({ [name]: { isLoggedIn: false, tokens: null } });
     return c.redirect(loginUrl);
   });
 
@@ -98,7 +101,7 @@ export const setAuth = (app: Hono, name: AuthName, checkSign: CheckSign, options
   authRouter.use(authMiddleware);
 
   // Register templates for authenticated /app routes
-  viewTemplates(authRouter, viewsPath, path.join(viewsPath, `_${name}`), `/`);
+  viewTemplates(authRouter, __dirname, path.join(__dirname, viewsDir, `_${name}`), `/`);
 
   app.route(`/${name}`, authRouter);
 };
