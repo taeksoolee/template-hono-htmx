@@ -1,0 +1,25 @@
+<div hx-boost="true" hx-target="#main" hx-swap="innerHTML">
+  <div>
+    <h2>All Resource</h2>
+    <a href="/hzv/management/resource?type=all">View Details</a>
+    <div>Total: {{ totalResourceCount }}</div>
+    <div>Assigned: {{ assignedResourceCount }}</div>
+    <div>Unassigned: {{ unassignedResourceCount }}</div>
+  </div>
+
+  <div>
+    <h2>Sub-Centralized Resources</h2>
+    <a href="/hzv/management/resource?type=sub_centralized">View Details</a>
+    <div>Total: {{ subCentralizedResourceCount }}</div>
+    <div>Assigned: {{ assignedSubCentralizedResourceCount }}</div>
+    <div>Unassigned: {{ unassignedSubCentralizedResourceCount }}</div>
+  </div>
+
+  <div>
+    <h2>Bidding Resources</h2>
+    <a href="/hzv/management/resource?type=bidding">View Details</a>
+    <div>Bidding: {{ biddingResourcesCount }}</div>
+    <div>Assigned: {{ assignedBiddingResourcesCount }}</div>
+    <div>Unassigned: {{ unassignedBiddingResourcesCount }}</div>
+  </div>
+</div>

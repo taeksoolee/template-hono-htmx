@@ -100,5 +100,16 @@
     - `viewTemplates` 함수 호출 시 인증된 경로의 기본 경로를 `/`로 변경.
     - `authRouter`를 `app.route(`/${name}`, authRouter)`로 마운트하도록 변경하여 라우팅 구조 개선.
     - `return authMiddleware;` 문 제거.
+- **2025-11-23**:
+  - **`hono-app` 인증 시스템 및 파일 구조 리팩토링:**
+    - `hono-app/src/const.ts` 수정.
+    - `hono-app/src/index.ts` 수정.
+    - `hono-app/src/types/auth-name.ts` 삭제.
+    - `hono-app/src/types/hono.d.ts` 수정.
+    - `hono-app/src/types/session-data.ts` 파일 추가.
+    - `hono-app/src/types/set-auth.ts` 삭제.
+    - `hono-app/src/types/tokens.ts` 파일 추가.
+    - `hono-app/src/utils/set-auth.ts` 수정.
+    - `hono-app/src/utils/view-templates.ts` 수정.
 
 ---

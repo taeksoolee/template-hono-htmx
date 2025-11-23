@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
+
+  <style>
+    header {
+      background-color: #f0f0f0;
+      padding: 10px;
+    }
+
+    nav {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    nav a.active {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body id="main" hx-boost="true" hx-target="#main" hx-swap="innerHTML">
+  <header>
+    <h1><a href="/">HZV App</a></h1>
+    
+    <nav>
+      <a href="/hzv" class="{% if currentPath == '/hzv' %}active{% endif %}">Home</a>
+      <span>&nbsp;|&nbsp;</span>
+      <a href="/hzv/management/resource" class="{% if currentPath == '/hzv/management/resource' %}active{% endif %}">Resource</a>
+    </nav>
+    <a href="/auth/hzv/logout">Logout</a>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

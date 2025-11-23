@@ -1,0 +1,67 @@
+<div hx-boost="true" hx-target="#main" hx-swap="innerHTML">
+  <div>
+    <nav class="pagination-navigation" >
+      {% if pagination.page > 1 %}
+      <a href="{{ currentPath }}?type={{ type | default('all') }}&page={{ pagination.page - 1 }}&page_count={{ pagination.pageCount }}">Previous</a>
+      {% else %}
+      <span>Previous</span>
+      {% endif %}
+      
+      <!-- 현재 기준 5개 페이지 바로이동 보이도록 -->
+      <span>&nbsp;&nbsp;</span>
+      {% for p in pagination.movePages %}
+        {% if p == pagination.page %}
+          <strong>{{ p }}</strong>
+        {% else %}
+          <a href="{{ currentPath }}?type={{ type | default('all') }}&page={{ p }}&page_count={{ pagination.pageCount }}">{{ p }}</a>
+        {% endif %}
+        <span>&nbsp;</span>
+      {% endfor %}
+      <span>&nbsp;&nbsp;</span>
+
+
+      {% if pagination.page < pagination.totalPages %}
+      <a href="{{ currentPath }}?type={{ type | default('all') }}&page={{ pagination.page + 1 }}&page_count={{ pagination.pageCount }}">Next</a>
+      {% else %}
+      <span>Next</span>
+      {% endif %}
+      <span>&nbsp;|&nbsp;</span>
+
+      <span>Page {{ pagination.page }} of {{ pagination.totalPages }}</span>
+    </nav>
+  </div>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Resource Name</th>
+          <th>Group Name</th>
+          <th>Group Memo</th>
+          <th>Last Edited</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for resource in resources %}
+        <tr>
+          <td>
+            {% if not resource.group.name %}
+              <!-- 입찰제도 -->
+              Unassigned
+            {% elif resource.group.name === '무소속자원' %}
+              <!-- 준중앙제도 -->
+              Unassigned
+            {% else %}
+              Assigned
+            {% endif %}
+          </td>
+          <td>{{ resource.infra.name }}</td>
+          <td>{{ resource.group.name }}</td>
+          <td>{{ resource.group_assign.memo }}</td>
+          <td>{{ resource.modified_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -14,10 +14,13 @@
   "dependencies": {
     "@hono/node-server": "^1.19.6",
     "@hono/session": "^0.2.0",
+    "got": "^14.6.5",
     "hono": "^4.10.6",
+    "jose": "^6.1.2",
     "nunjucks": "^3.2.4"
   },
   "devDependencies": {
+    "@types/got": "^9.6.12",
     "@types/node": "^24.10.1",
     "@types/nunjucks": "^3.2.6",
     "tsx": "^4.20.6",

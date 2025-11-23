@@ -1,0 +1,13 @@
+{% extends "feature/hzv/template/layout/index.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Welcome!</h1>
+
+<section
+  hx-get="/hzv/_partial/resource-count-dashboard"
+  hx-trigger="load" hx-swap="innerHTML" hx-target="this" >
+  <span>Loading...</span>
+</section>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "feature/hzv/template/layout/index.html" %}
+
+{% block title %}Resources{% endblock %}
+
+{% block content %}
+<h1>
+  <button onclick="history.back()">&#8592;</button>
+  Resource Management Page
+</h1>
+
+<section>
+  <h3>
+    {% if query.type == 'sub_centralized' %}
+      Sub-Centralized Resources
+    {% elif query.type == 'bidding' %}
+      Bidding Resources
+    {% else %}
+      All Resources
+    {% endif %}
+  </h3>
+  <div>
+    <a href="/hzv/management/resource/assign-group">Assign Group to Resource</a>
+  </div>
+  <div
+    hx-get="/hzv/_partial/resource-table?type={{ query.type | default('all') }}&page={{ query.page | default(1) }}&page_count={{ query.page_count | default(10) }}"
+    hx-trigger="load" hx-swap="innerHTML" hx-target="this" >
+    <span>Loading...</span>
+  </div>
+</section>
+{% endblock %}
